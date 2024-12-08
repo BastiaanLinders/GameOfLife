@@ -28,7 +28,7 @@ public partial class MainWindow : Window
 
     private void DrawBoard()
     {
-        const int squaresize = 4;
+        const int squaresize = 20;
 
         _game.Field!.Squares.ForEach(s =>
         {
@@ -74,7 +74,8 @@ public partial class MainWindow : Window
     {
         _fieldMap.ForEach(map =>
         {
-            map.Rectangle.Visibility = map.Square.IsAlive ? Visibility.Visible : Visibility.Hidden;
+            //map.Rectangle.Visibility = map.Square.IsAlive ? Visibility.Visible : Visibility.Hidden;
+            map.Rectangle.Fill = new SolidColorBrush(map.Square.IsAlive ? Colors.Orange : Colors.LightGray);
         });
     }
 

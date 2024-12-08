@@ -1,4 +1,4 @@
-﻿using System.Data.SqlTypes;
+﻿using System.Diagnostics;
 using StackExchange.Profiling;
 
 namespace Game.Services;
@@ -10,34 +10,60 @@ public class Game
     private readonly ParallelOptions _parallelOptions = new() { MaxDegreeOfParallelism = Environment.ProcessorCount / 2 };
 
     private CancellationTokenSource _cancellationTokenSource = new();
+
     private int _tickSpeedInMs = 350;
+    private int _generation = 0;
 
     public Field? Field { get; set; }
     public event OnTick? OnTickEvent;
 
-    private List<Square> _evaluationSquares = new();
+    public Task Init()
+    {
+        Console.WriteLine("Init");
+
+        using var _ = MiniProfiler.Current.Step("Init");
+
+        const int fieldSize = 2000;
+
+        Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
+        Field = new Field(fieldSize, fieldSize);
+
+        Console.WriteLine($"Creating lookup for {Field.Squares.Count} squares");
+        var squaresLookup = Field.Squares.GroupBy(s => s.Location.Y)
+            .ToDictionary(g => g.Key, g => g.ToDictionary(s => s.Location.X, s => s));
+
+        Console.WriteLine($"Making {Field.Squares.Count} squares aware of each other");
+        Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.CreateAwareness(squaresLookup));
+
+        Console.WriteLine("Init complete");
+
+        return Task.CompletedTask;
+    }
 
     public async Task Start()
     {
         Console.WriteLine("Start");
         _cancellationTokenSource = new CancellationTokenSource();
 
-        MiniProfiler.StartNew("Game");
+        var profiler = MiniProfiler.StartNew("Game")!;
 
-        while (_cancellationTokenSource.Token.IsCancellationRequested == false)
+        Stopwatch sw = new();
+        while (_cancellationTokenSource.Token.IsCancellationRequested == false && _generation < 100)
         {
-            var profiler = MiniProfiler.StartNew("Tick")!;
-            await TickOld();
-            await profiler.StopAsync();
+            _generation++;
+            sw.Reset();
 
-            var delay = _tickSpeedInMs - (int)profiler.DurationMilliseconds;
-            await Task.Delay(delay > 0 ? delay : 0);
-
-            Console.WriteLine(MiniProfiler.Current.RenderPlainText());
-            Console.WriteLine();
+            await Tick();
 
             OnTickEvent?.Invoke();
+            
+            //var delay = _tickSpeedInMs - (int)sw.ElapsedMilliseconds;
+            //await Task.Delay(delay > 0 ? delay : 0);
         }
+
+        await profiler.StopAsync();
+        Console.WriteLine(MiniProfiler.Current.RenderPlainText());
+        Console.WriteLine();
     }
 
     public void UpdateGps(int gps)
@@ -49,7 +75,6 @@ public class Game
     public void Stop()
     {
         Console.WriteLine("Stop");
-
         _cancellationTokenSource.Cancel();
     }
 
@@ -59,35 +84,9 @@ public class Game
 
         Stop();
         Field!.Clear();
+        _generation = 0;
     }
 
-    public Task Init()
-    {
-        Console.WriteLine("Init");
-
-        using var _ = MiniProfiler.Current.Step("Init");
-
-        const int fieldSize = 100;
-
-        Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
-        Field = new Field(fieldSize, fieldSize);
-
-        Console.WriteLine($"Creating lookup for {Field.Squares.Count} squares");
-        var squaresLookup = Field.Squares.GroupBy(s => s.Location.Y)
-            .ToDictionary(g => g.Key, g => g.ToDictionary(s => s.Location.X, s => s));
-
-        Console.WriteLine($"Making {Field.Squares.Count} squares aware of each other");
-        Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.MakeAware(squaresLookup));
-
-        Console.WriteLine("Init complete");
-
-        _evaluationSquares = Field.Squares
-            .Where(s => s.Location.X % 3 == 0 &&
-                        s.Location.Y % 3 == 0)
-            .ToList();
-
-        return Task.CompletedTask;
-    }
 
     public void Sprinkle(double probabilityOfLife)
     {
@@ -102,29 +101,14 @@ public class Game
 
     private Task Tick()
     {
-        using (MiniProfiler.Current.Step("Evaluate"))
+        using (MiniProfiler.Current.CustomTiming("Evaluate", ""))
         {
-            Parallel.ForEach(_evaluationSquares, _parallelOptions, square => square.Evaluate());
+            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Evaluate());
         }
 
-        using (MiniProfiler.Current.Step("Act"))
+        using (MiniProfiler.Current.CustomTiming("Act", ""))
         {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Procede());
-        }
-
-        return Task.CompletedTask;
-    }
-    
-    private Task TickOld()
-    {
-        using (MiniProfiler.Current.Step("Evaluate"))
-        {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Evaluate2());
-        }
-
-        using (MiniProfiler.Current.Step("Act"))
-        {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Procede());
+            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Advance());
         }
 
         return Task.CompletedTask;

@@ -2,19 +2,13 @@
 
 public class Square
 {
-    private bool _nextState;
+    private bool? _nextState;
     public required Location Location { get; init; }
+    public required bool IsAlive { get; set; }
+
     private Square[] Neighbours { get; set; } = null!;
 
-    public required bool IsAlive { get; set; }
-    
-    public void Reset()
-    {
-        IsAlive = false;
-        _nextState = false;
-    }
-
-    public void MakeAware(Dictionary<int, Dictionary<int, Square>> squaresLookup)
+    public void CreateAwareness(Dictionary<int, Dictionary<int, Square>> squaresLookup)
     {
         var above = squaresLookup.GetValueOrDefault(Location.Y - 1);
         var equal = squaresLookup.GetValueOrDefault(Location.Y);
@@ -31,75 +25,33 @@ public class Square
             .ToArray();
     }
 
-    public void Evaluate(bool fromNeighbour = false)
+    public void Evaluate(bool calledByNeighbour = false)
     {
-        int aliveNeighbours = 0;
-        // ReSharper disable once LoopCanBeConvertedToQuery : Performance
+        if (_nextState.HasValue) return;
+        if (!IsAlive && !calledByNeighbour) return;
+
+        var aliveNeighbours = 0;
         foreach (var neighbour in Neighbours)
         {
-            if (!fromNeighbour)
-            {
-                neighbour.Evaluate(true);
-            }
-            if (neighbour.IsAlive)
-            {
-                aliveNeighbours++;
-            }
-        }   
-
-        _nextState =
-            (!IsAlive && aliveNeighbours == 3)
-            ||
-            (IsAlive && aliveNeighbours is > 1 and < 4);
-    }
-    
-    public void Evaluate2(bool fromNeighbour = false)
-    {
-        if (!IsAlive && !fromNeighbour)
-        {
-            return;
+            if(neighbour.IsAlive) aliveNeighbours ++;
+            if(!calledByNeighbour) neighbour.Evaluate(true);
         }
-        
-        int aliveNeighbours = 0;
-        // ReSharper disable once LoopCanBeConvertedToQuery : Performance
-        foreach (var neighbour in Neighbours)
-        {
-            if (!fromNeighbour)
-            {
-                neighbour.Evaluate(true);
-            }
-            if (neighbour.IsAlive)
-            {
-                aliveNeighbours++;
-            }
-        }   
 
         _nextState =
             (!IsAlive && aliveNeighbours == 3)
             ||
-            (IsAlive && aliveNeighbours is > 1 and < 4);
-    }
-    
-    public void EvaluateOld()
-    {
-        int aliveNeighbours = 0;
-        // ReSharper disable once LoopCanBeConvertedToQuery : Performance
-        foreach (var neighbour in Neighbours)
-        {
-            if (neighbour.IsAlive)
-            {
-                aliveNeighbours++;
-            }
-        }   
-
-        _nextState =
-            (!IsAlive && aliveNeighbours == 3)
-            ||
-            (IsAlive && aliveNeighbours is > 1 and < 4);
+            (IsAlive && aliveNeighbours is 2 or 3);
     }
 
-    public void Procede()
+    public void Advance()
     {
-        IsAlive = _nextState;
+        IsAlive = _nextState ?? false;
+        _nextState = null;
+    }
+
+    public void Reset()
+    {
+        IsAlive = false;
+        _nextState = null;
     }
 }
