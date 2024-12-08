@@ -7,6 +7,12 @@ public class Square
     private Square[] Neighbours { get; set; } = null!;
 
     public required bool IsAlive { get; set; }
+    
+    public void Reset()
+    {
+        IsAlive = false;
+        _nextState = false;
+    }
 
     public void MakeAware(Dictionary<int, Dictionary<int, Square>> squaresLookup)
     {
@@ -25,7 +31,56 @@ public class Square
             .ToArray();
     }
 
-    public void Evaluate()
+    public void Evaluate(bool fromNeighbour = false)
+    {
+        int aliveNeighbours = 0;
+        // ReSharper disable once LoopCanBeConvertedToQuery : Performance
+        foreach (var neighbour in Neighbours)
+        {
+            if (!fromNeighbour)
+            {
+                neighbour.Evaluate(true);
+            }
+            if (neighbour.IsAlive)
+            {
+                aliveNeighbours++;
+            }
+        }   
+
+        _nextState =
+            (!IsAlive && aliveNeighbours == 3)
+            ||
+            (IsAlive && aliveNeighbours is > 1 and < 4);
+    }
+    
+    public void Evaluate2(bool fromNeighbour = false)
+    {
+        if (!IsAlive && !fromNeighbour)
+        {
+            return;
+        }
+        
+        int aliveNeighbours = 0;
+        // ReSharper disable once LoopCanBeConvertedToQuery : Performance
+        foreach (var neighbour in Neighbours)
+        {
+            if (!fromNeighbour)
+            {
+                neighbour.Evaluate(true);
+            }
+            if (neighbour.IsAlive)
+            {
+                aliveNeighbours++;
+            }
+        }   
+
+        _nextState =
+            (!IsAlive && aliveNeighbours == 3)
+            ||
+            (IsAlive && aliveNeighbours is > 1 and < 4);
+    }
+    
+    public void EvaluateOld()
     {
         int aliveNeighbours = 0;
         // ReSharper disable once LoopCanBeConvertedToQuery : Performance
@@ -43,7 +98,7 @@ public class Square
             (IsAlive && aliveNeighbours is > 1 and < 4);
     }
 
-    public void Act()
+    public void Procede()
     {
         IsAlive = _nextState;
     }

@@ -5,7 +5,7 @@ Console.WriteLine("Let's go!");
 var cts = new CancellationTokenSource();
 var game = new Game.Services.Game();
 await game.Init();
-game.Sprinkle(0.5);
+game.Sprinkle(0.1);
 
 Console.CancelKeyPress += (_, eventArgs) =>
 {

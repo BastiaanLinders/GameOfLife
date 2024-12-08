@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Game.Services;
+using StackExchange.Profiling;
 
 namespace Game.UI;
 
@@ -27,7 +28,7 @@ public partial class MainWindow : Window
 
     private void DrawBoard()
     {
-        const int squaresize = 20;
+        const int squaresize = 4;
 
         _game.Field!.Squares.ForEach(s =>
         {
@@ -37,7 +38,7 @@ public partial class MainWindow : Window
                         Height = squaresize,
                         Stroke = new SolidColorBrush(Colors.Gray),
                         Fill = new SolidColorBrush(s.IsAlive ? Colors.Orange : Colors.LightGray),
-                        ToolTip = "fiets"
+                        ToolTip = $"{s.Location.X} - {s.Location.Y}"
                     };
 
             Canvas.SetLeft(r, s.Location.X * squaresize);
@@ -71,7 +72,10 @@ public partial class MainWindow : Window
 
     private void RefreshBoard()
     {
-        _fieldMap.ForEach(map => { map.Rectangle.Fill = new SolidColorBrush(map.Square.IsAlive ? Colors.Orange : Colors.LightGray); });
+        _fieldMap.ForEach(map =>
+        {
+            map.Rectangle.Visibility = map.Square.IsAlive ? Visibility.Visible : Visibility.Hidden;
+        });
     }
 
     private void OnStartClick(object sender, RoutedEventArgs e)

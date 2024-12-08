@@ -1,4 +1,5 @@
-﻿using StackExchange.Profiling;
+﻿using System.Data.SqlTypes;
+using StackExchange.Profiling;
 
 namespace Game.Services;
 
@@ -14,6 +15,8 @@ public class Game
     public Field? Field { get; set; }
     public event OnTick? OnTickEvent;
 
+    private List<Square> _evaluationSquares = new();
+
     public async Task Start()
     {
         Console.WriteLine("Start");
@@ -24,7 +27,7 @@ public class Game
         while (_cancellationTokenSource.Token.IsCancellationRequested == false)
         {
             var profiler = MiniProfiler.StartNew("Tick")!;
-            await Tick();
+            await TickOld();
             await profiler.StopAsync();
 
             var delay = _tickSpeedInMs - (int)profiler.DurationMilliseconds;
@@ -64,7 +67,7 @@ public class Game
 
         using var _ = MiniProfiler.Current.Step("Init");
 
-        const int fieldSize = 50;
+        const int fieldSize = 100;
 
         Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
         Field = new Field(fieldSize, fieldSize);
@@ -77,6 +80,11 @@ public class Game
         Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.MakeAware(squaresLookup));
 
         Console.WriteLine("Init complete");
+
+        _evaluationSquares = Field.Squares
+            .Where(s => s.Location.X % 3 == 0 &&
+                        s.Location.Y % 3 == 0)
+            .ToList();
 
         return Task.CompletedTask;
     }
@@ -96,12 +104,27 @@ public class Game
     {
         using (MiniProfiler.Current.Step("Evaluate"))
         {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Evaluate());
+            Parallel.ForEach(_evaluationSquares, _parallelOptions, square => square.Evaluate());
         }
 
         using (MiniProfiler.Current.Step("Act"))
         {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Act());
+            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Procede());
+        }
+
+        return Task.CompletedTask;
+    }
+    
+    private Task TickOld()
+    {
+        using (MiniProfiler.Current.Step("Evaluate"))
+        {
+            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Evaluate2());
+        }
+
+        using (MiniProfiler.Current.Step("Act"))
+        {
+            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Procede());
         }
 
         return Task.CompletedTask;

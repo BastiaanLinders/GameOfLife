@@ -19,6 +19,6 @@ public class Field
 
     public void Clear()
     {
-        Squares.ForEach(s => s.IsAlive = false);
+        Squares.ForEach(s => { s.Reset(); });
     }
 }
