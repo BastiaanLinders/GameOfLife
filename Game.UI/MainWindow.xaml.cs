@@ -33,12 +33,12 @@ public partial class MainWindow : Window
         foreach (var s in _game.Field!.Squares)
         {
             var r = new Rectangle
-                    {
-                        Width = squaresize,
-                        Height = squaresize,
-                        Stroke = new SolidColorBrush(Colors.Gray),
-                        Fill = new SolidColorBrush(s.IsAlive ? Colors.Orange : Colors.LightGray)
-                    };
+            {
+                Width = squaresize,
+                Height = squaresize,
+                Stroke = new SolidColorBrush(Colors.Gray),
+                Fill = new SolidColorBrush(s.IsAlive ? Colors.Orange : Colors.LightGray)
+            };
 
             Canvas.SetLeft(r, s.Location.X * squaresize);
             Canvas.SetTop(r, s.Location.Y * squaresize);
@@ -60,7 +60,7 @@ public partial class MainWindow : Window
                 map.Square.IsAlive = !map.Square.IsAlive;
             }
         }
-        
+
         Dispatcher.Invoke(RefreshBoard);
     }
 

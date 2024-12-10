@@ -28,7 +28,7 @@ public class Game
         Field = new Field(fieldSize, fieldSize);
 
         Console.WriteLine("Init complete");
-        
+
         Console.WriteLine(MiniProfiler.Current.RenderPlainText());
 
         return Task.CompletedTask;
@@ -49,7 +49,7 @@ public class Game
 
             OnTickEvent?.Invoke();
 
-            var delay = _tickSpeedInMs - (int)sw.ElapsedMilliseconds;
+            var delay = _tickSpeedInMs - (int) sw.ElapsedMilliseconds;
             await Task.Delay(delay > 0 ? delay : 0);
         }
 
@@ -83,7 +83,10 @@ public class Game
         using var _ = MiniProfiler.Current.Step("Sprinkle");
 
         var random = new Random(DateTime.Now.Nanosecond);
-        foreach (var square in Field!.Squares) square.IsAlive = random.NextDouble() < probabilityOfLife;
+        foreach (var square in Field!.Squares)
+        {
+            square.IsAlive = random.NextDouble() < probabilityOfLife;
+        }
 
         Console.WriteLine($"Sprinkle complete. Sprinkled with a probability of {probabilityOfLife:P0}, " +
                           $"{Field.Squares.Count(s => s.IsAlive)} squares are alive");
