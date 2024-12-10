@@ -3,25 +3,29 @@
 public class Square
 {
     private bool? _nextState;
-    public required Location Location { get; init; }
+    public required Location Location { get; set; }
     public required bool IsAlive { get; set; }
-
     private Square[] Neighbours { get; set; } = null!;
 
     public void CreateAwareness(Square[][] squaresLookup)
     {
-        var above = squaresLookup.ElementAtOrDefault(Location.Y - 1);
-        var equal = squaresLookup.ElementAtOrDefault(Location.Y);
-        var below = squaresLookup.ElementAtOrDefault(Location.Y + 1);
+        List<Square?> surrounding =
+        [
+            squaresLookup.ElementAtOrDefault(Location.Y - 1)?.ElementAtOrDefault(Location.X - 1),
+            squaresLookup.ElementAtOrDefault(Location.Y - 1)?.ElementAtOrDefault(Location.X),
+            squaresLookup.ElementAtOrDefault(Location.Y - 1)?.ElementAtOrDefault(Location.X + 1),
 
-        Neighbours = new[]
-            {
-                above?.ElementAtOrDefault(Location.X - 1), above?.ElementAtOrDefault(Location.X), above?.ElementAtOrDefault(Location.X + 1),
-                equal?.ElementAtOrDefault(Location.X - 1), /*              self               */ equal?.ElementAtOrDefault(Location.X + 1),
-                below?.ElementAtOrDefault(Location.X - 1), below?.ElementAtOrDefault(Location.X), below?.ElementAtOrDefault(Location.X + 1)
-            }
-            .Where(s => s is not null)
-            .Select(s => s!)
+            squaresLookup.ElementAtOrDefault(Location.Y)?.ElementAtOrDefault(Location.X - 1),
+            squaresLookup.ElementAtOrDefault(Location.Y)?.ElementAtOrDefault(Location.X + 1),
+
+            squaresLookup.ElementAtOrDefault(Location.Y + 1)?.ElementAtOrDefault(Location.X - 1),
+            squaresLookup.ElementAtOrDefault(Location.Y + 1)?.ElementAtOrDefault(Location.X),
+            squaresLookup.ElementAtOrDefault(Location.Y + 1)?.ElementAtOrDefault(Location.X + 1)
+        ];
+
+        Neighbours = surrounding
+            .FindAll(s => s is not null)
+            .ConvertAll(s => s!)
             .ToArray();
     }
 

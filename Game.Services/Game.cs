@@ -22,13 +22,14 @@ public class Game
     {
         Console.WriteLine("Init");
 
-        const int fieldSize = 20;
+        const int fieldSize = 1000;
 
         Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
         Field = new Field(fieldSize, fieldSize);
-        Field.Init();
 
         Console.WriteLine("Init complete");
+        
+        Console.WriteLine(MiniProfiler.Current.RenderPlainText());
 
         return Task.CompletedTask;
     }

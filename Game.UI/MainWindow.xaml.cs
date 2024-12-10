@@ -30,15 +30,14 @@ public partial class MainWindow : Window
     {
         const int squaresize = 20;
 
-        _game.Field!.Squares.ForEach(s =>
+        foreach (var s in _game.Field!.Squares)
         {
             var r = new Rectangle
                     {
                         Width = squaresize,
                         Height = squaresize,
                         Stroke = new SolidColorBrush(Colors.Gray),
-                        Fill = new SolidColorBrush(s.IsAlive ? Colors.Orange : Colors.LightGray),
-                        ToolTip = $"{s.Location.X} - {s.Location.Y}"
+                        Fill = new SolidColorBrush(s.IsAlive ? Colors.Orange : Colors.LightGray)
                     };
 
             Canvas.SetLeft(r, s.Location.X * squaresize);
@@ -46,7 +45,7 @@ public partial class MainWindow : Window
             Canvas.Children.Add(r);
 
             _fieldMap.Add((s, r));
-        });
+        }
 
         Canvas.MouseDown += OnCanvasMouseDown;
     }
