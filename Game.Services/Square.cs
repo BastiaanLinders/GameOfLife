@@ -3,8 +3,9 @@
 public class Square
 {
     private bool? _nextState;
-    public required Location Location { get; set; }
     public required bool IsAlive { get; set; }
+    public required Location Location { get; set; }
+
     private Square[] Neighbours { get; set; } = null!;
 
     public void CreateAwareness(Square[][] squaresLookup)
@@ -31,14 +32,28 @@ public class Square
 
     public void Evaluate(bool calledByNeighbour = false)
     {
-        if (_nextState.HasValue) return;
-        if (!IsAlive && !calledByNeighbour) return;
+        if (_nextState.HasValue)
+        {
+            return;
+        }
+
+        if (!IsAlive && !calledByNeighbour)
+        {
+            return;
+        }
 
         var aliveNeighbours = 0;
         foreach (var neighbour in Neighbours)
         {
-            if (neighbour.IsAlive) aliveNeighbours++;
-            if (!calledByNeighbour) neighbour.Evaluate(true);
+            if (neighbour.IsAlive)
+            {
+                aliveNeighbours++;
+            }
+
+            if (!calledByNeighbour)
+            {
+                neighbour.Evaluate(true);
+            }
         }
 
         _nextState =
