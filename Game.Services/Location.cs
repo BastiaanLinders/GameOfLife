@@ -1,7 +1,7 @@
 ﻿namespace Game.Services;
 
-public record Location
+public struct Location
 {
-    public required int X { get; init; }
-    public required int Y { get; init; }
+    public int X;
+    public int Y;
 }

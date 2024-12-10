@@ -10,9 +10,10 @@ public class Game
     private readonly ParallelOptions _parallelOptions = new() { MaxDegreeOfParallelism = Environment.ProcessorCount / 2 };
 
     private CancellationTokenSource _cancellationTokenSource = new();
+    private int _generation;
 
     private int _tickSpeedInMs = 350;
-    private int _generation = 0;
+    private MiniProfiler _profiler = MiniProfiler.StartNew("Game")!;
 
     public Field? Field { get; set; }
     public event OnTick? OnTickEvent;
@@ -21,19 +22,11 @@ public class Game
     {
         Console.WriteLine("Init");
 
-        using var _ = MiniProfiler.Current.Step("Init");
-
-        const int fieldSize = 2000;
+        const int fieldSize = 20;
 
         Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
         Field = new Field(fieldSize, fieldSize);
-
-        Console.WriteLine($"Creating lookup for {Field.Squares.Count} squares");
-        var squaresLookup = Field.Squares.GroupBy(s => s.Location.Y)
-            .ToDictionary(g => g.Key, g => g.ToDictionary(s => s.Location.X, s => s));
-
-        Console.WriteLine($"Making {Field.Squares.Count} squares aware of each other");
-        Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.CreateAwareness(squaresLookup));
+        Field.Init();
 
         Console.WriteLine("Init complete");
 
@@ -45,10 +38,8 @@ public class Game
         Console.WriteLine("Start");
         _cancellationTokenSource = new CancellationTokenSource();
 
-        var profiler = MiniProfiler.StartNew("Game")!;
-
         Stopwatch sw = new();
-        while (_cancellationTokenSource.Token.IsCancellationRequested == false && _generation < 100)
+        while (_cancellationTokenSource.Token.IsCancellationRequested == false)
         {
             _generation++;
             sw.Reset();
@@ -56,14 +47,12 @@ public class Game
             await Tick();
 
             OnTickEvent?.Invoke();
-            
-            //var delay = _tickSpeedInMs - (int)sw.ElapsedMilliseconds;
-            //await Task.Delay(delay > 0 ? delay : 0);
+
+            var delay = _tickSpeedInMs - (int)sw.ElapsedMilliseconds;
+            await Task.Delay(delay > 0 ? delay : 0);
         }
 
-        await profiler.StopAsync();
         Console.WriteLine(MiniProfiler.Current.RenderPlainText());
-        Console.WriteLine();
     }
 
     public void UpdateGps(int gps)
