@@ -11,9 +11,9 @@ public class Game
 
     private CancellationTokenSource _cancellationTokenSource = new();
     private int _generation;
+    private MiniProfiler _profiler = MiniProfiler.StartNew("Game")!;
 
     private int _tickSpeedInMs = 350;
-    private MiniProfiler _profiler = MiniProfiler.StartNew("Game")!;
 
     public Field? Field { get; set; }
     public event OnTick? OnTickEvent;
@@ -22,7 +22,7 @@ public class Game
     {
         Console.WriteLine("Init");
 
-        const int fieldSize = 1000;
+        const int fieldSize = 5000;
 
         Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
         Field = new Field(fieldSize, fieldSize);
@@ -39,17 +39,21 @@ public class Game
         Console.WriteLine("Start");
         _cancellationTokenSource = new CancellationTokenSource();
 
-        Stopwatch sw = new();
+        var sw = new Stopwatch();
         while (_cancellationTokenSource.Token.IsCancellationRequested == false)
         {
-            _generation++;
-            sw.Reset();
-
-            await Tick();
+            var drift = Math.Max(0, (int) sw.ElapsedMilliseconds - _tickSpeedInMs);
+            sw.Restart();
+            Tick();
 
             OnTickEvent?.Invoke();
 
-            var delay = _tickSpeedInMs - (int) sw.ElapsedMilliseconds;
+            var delay = _tickSpeedInMs - (int) sw.ElapsedMilliseconds - drift;
+            if (delay < _tickSpeedInMs / 2)
+            {
+                Console.WriteLine($"Warning: Tick took {sw.ElapsedMilliseconds}ms to execute which is more than half the tick speed.");
+            }
+
             await Task.Delay(delay > 0 ? delay : 0);
         }
 
@@ -92,18 +96,9 @@ public class Game
                           $"{Field.Squares.Count(s => s.IsAlive)} squares are alive");
     }
 
-    private Task Tick()
+    private void Tick()
     {
-        using (MiniProfiler.Current.CustomTiming("Evaluate", ""))
-        {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Evaluate());
-        }
-
-        using (MiniProfiler.Current.CustomTiming("Act", ""))
-        {
-            Parallel.ForEach(Field!.Squares, _parallelOptions, square => square.Advance());
-        }
-
-        return Task.CompletedTask;
+        Field!.Advance();
+        _generation++;
     }
 }

@@ -215,7 +215,7 @@ resharper_indent_text = OneIndent
 resharper_indent_typearg_angles = inside
 resharper_indent_typeparam_angles = inside
 resharper_indent_type_constraints = true
-resharper_instance_members_qualify_declared_in = this_class, base_class
+resharper_instance_members_qualify_declared_in = base_class
 resharper_int_align = false
 resharper_int_align_fix_in_adjacent = true
 resharper_js_align_multiline_parameter = false
@@ -295,7 +295,7 @@ resharper_place_constructor_initializer_on_same_line = true
 resharper_place_each_decorator_on_new_line = false
 resharper_place_event_attribute_on_same_line = false
 resharper_place_expr_accessor_on_single_line = if_owner_is_single_line
-resharper_place_expr_method_on_single_line = if_owner_is_single_line
+resharper_place_expr_method_on_single_line = true
 resharper_place_expr_property_on_single_line = if_owner_is_single_line
 resharper_place_field_attribute_on_same_line = false
 resharper_place_field_decorator_on_the_same_line = false
@@ -327,7 +327,7 @@ resharper_remove_blank_lines_near_braces_in_code = true
 resharper_remove_blank_lines_near_braces_in_declarations = true
 resharper_remove_this_qualifier = true
 resharper_resx_attribute_indent = single_indent
-resharper_resx_linebreak_before_elements =
+resharper_resx_linebreak_before_elements = 
 resharper_resx_max_blank_lines_between_tags = 0
 resharper_resx_max_line_length = 2147483647
 resharper_resx_pi_attribute_style = do_not_touch
@@ -488,7 +488,7 @@ resharper_trailing_comma_in_singleline_lists = false
 resharper_types_braces = end_of_line
 resharper_use_continuous_indent_inside_initializer_braces = true
 resharper_use_continuous_indent_inside_parens = true
-resharper_use_heuristics_for_body_style = true
+resharper_use_heuristics_for_body_style = false
 resharper_use_indents_from_main_language_in_file = true
 resharper_use_indent_from_previous_element = true
 resharper_use_roslyn_logic_for_evident_types = false
@@ -551,7 +551,7 @@ resharper_xmldoc_wrap_lines = true
 resharper_xmldoc_wrap_tags_and_pi = true
 resharper_xmldoc_wrap_text = true
 resharper_xml_attribute_indent = align_by_first_attribute
-resharper_xml_linebreak_before_elements =
+resharper_xml_linebreak_before_elements = 
 resharper_xml_max_blank_lines_between_tags = 2
 resharper_xml_pi_attribute_style = do_not_touch
 resharper_xml_space_before_self_closing = true
@@ -1662,6 +1662,12 @@ resharper_xaml_xaml_xamarin_forms_data_type_and_binding_context_type_mismatched_
 resharper_xaml_x_key_attribute_disallowed_highlighting = error
 resharper_xml_doc_comment_syntax_problem_highlighting = warning
 resharper_xunit_xunit_test_with_console_output_highlighting = warning
+
+# Microsoft .NET properties
+csharp_style_expression_bodied_accessors = true:suggestion
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_methods = false:none
+csharp_style_expression_bodied_properties = true:suggestion
 
 # Jetbrains Rider
 

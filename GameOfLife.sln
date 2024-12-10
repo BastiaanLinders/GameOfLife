@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Services", "Game.Servi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.UI", "Game.UI\Game.UI.csproj", "{A1F2A57D-0659-41EF-B3D4-9B1F882E66CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Services.Tests", "Game.Services.Tests\Game.Services.Tests.csproj", "{7E8F3484-101C-4C18-8D4E-C45F4372D709}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{A1F2A57D-0659-41EF-B3D4-9B1F882E66CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1F2A57D-0659-41EF-B3D4-9B1F882E66CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1F2A57D-0659-41EF-B3D4-9B1F882E66CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E8F3484-101C-4C18-8D4E-C45F4372D709}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E8F3484-101C-4C18-8D4E-C45F4372D709}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E8F3484-101C-4C18-8D4E-C45F4372D709}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E8F3484-101C-4C18-8D4E-C45F4372D709}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

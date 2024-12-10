@@ -4,30 +4,32 @@ public class Square
 {
     private bool? _nextState;
     public required bool IsAlive { get; set; }
-    public required Location Location { get; set; }
+    public required Location Location { get; init; }
 
     private Square[] Neighbours { get; set; } = null!;
 
-    public void CreateAwareness(Square[][] squaresLookup)
+    public void MakeAware(Square[][] grid)
     {
+        var x = Location.X;
+        var y = Location.Y;
+
         List<Square?> surrounding =
         [
-            squaresLookup.ElementAtOrDefault(Location.Y - 1)?.ElementAtOrDefault(Location.X - 1),
-            squaresLookup.ElementAtOrDefault(Location.Y - 1)?.ElementAtOrDefault(Location.X),
-            squaresLookup.ElementAtOrDefault(Location.Y - 1)?.ElementAtOrDefault(Location.X + 1),
-
-            squaresLookup.ElementAtOrDefault(Location.Y)?.ElementAtOrDefault(Location.X - 1),
-            squaresLookup.ElementAtOrDefault(Location.Y)?.ElementAtOrDefault(Location.X + 1),
-
-            squaresLookup.ElementAtOrDefault(Location.Y + 1)?.ElementAtOrDefault(Location.X - 1),
-            squaresLookup.ElementAtOrDefault(Location.Y + 1)?.ElementAtOrDefault(Location.X),
-            squaresLookup.ElementAtOrDefault(Location.Y + 1)?.ElementAtOrDefault(Location.X + 1)
+            GetSquare(grid, x - 1, y - 1), GetSquare(grid, x, y - 1), GetSquare(grid, x + 1, y - 1),
+            GetSquare(grid, x - 1, y + 0), /*        self          */ GetSquare(grid, x + 1, y + 0),
+            GetSquare(grid, x - 1, y + 1), GetSquare(grid, x, y + 1), GetSquare(grid, x + 1, y + 1)
         ];
 
         Neighbours = surrounding
             .FindAll(s => s is not null)
             .ConvertAll(s => s!)
             .ToArray();
+    }
+
+    // ReSharper disable once ParameterTypeCanBeEnumerable.Local : Performance
+    private static Square? GetSquare(Square[][] grid, int x, int y)
+    {
+        return grid.ElementAtOrDefault(y)?.ElementAtOrDefault(x);
     }
 
     public void Evaluate(bool calledByNeighbour = false)

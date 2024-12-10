@@ -4,45 +4,72 @@ namespace Game.Services;
 
 public class Field
 {
-    private readonly Square[][] _squareLookup;
+    private readonly ParallelOptions _parallelOptions;
 
-    public IEnumerable<Square> Squares => _squareLookup.SelectMany(row => row);
+    public Square[][] Grid { get; }
+    public IEnumerable<Square> Squares { get; }
 
-    public Field(int width, int height)
+    public Field(int width, int height, ParallelOptions parallelOptions)
     {
-        using var _ = MiniProfiler.Current.Step("Field Constructor");
+        _parallelOptions = parallelOptions;
 
-        using (MiniProfiler.Current.Step("Create squares"))
+        using var _ = MiniProfiler.Current.Step("Field Ctor");
+
+        using (MiniProfiler.Current.Step("Create Grid"))
         {
-            _squareLookup = new Square[height][];
-            for (var y = 0; y < height; y++)
-            {
-                _squareLookup[y] = new Square[width];
-                for (var x = 0; x < width; x++)
-                {
-                    _squareLookup[y][x] = new Square
-                    {
-                        Location = new Location { X = x, Y = y },
-                        IsAlive = false
-                    };
-                }
-            }
+            Grid = CreateGridSquares(width, height);
+            Squares = Grid.SelectMany(row => row);
         }
 
         using (MiniProfiler.Current.Step("Create awareness"))
         {
-            foreach (var square in Squares)
+            InitializeSquareAwareness();
+        }
+    }
+
+    private static Square[][] CreateGridSquares(int width, int height)
+    {
+        var grid = new Square[height][];
+        ;
+        for (var y = 0; y < height; y++)
+        {
+            grid[y] = new Square[width];
+            for (var x = 0; x < width; x++)
             {
-                square.CreateAwareness(_squareLookup);
+                grid[y][x] = new Square
+                {
+                    Location = new Location { X = x, Y = y },
+                    IsAlive = false
+                };
             }
+        }
+
+        return grid;
+    }
+
+    private void InitializeSquareAwareness()
+    {
+        foreach (var square in Squares)
+        {
+            square.MakeAware(Grid);
+        }
+    }
+
+    public void Advance()
+    {
+        using (MiniProfiler.Current.Step("Evaluate squares"))
+        {
+            Parallel.ForEach(Squares, _parallelOptions, s => s.Evaluate());
+        }
+
+        using (MiniProfiler.Current.Step("Advance squares"))
+        {
+            Parallel.ForEach(Squares, _parallelOptions, s => s.Advance());
         }
     }
 
     public void Clear()
     {
-        foreach (var square in Squares)
-        {
-            square.Reset();
-        }
+        Parallel.ForEach(Squares, _parallelOptions, s => s.Reset());
     }
 }
