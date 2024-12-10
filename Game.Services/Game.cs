@@ -20,12 +20,12 @@ public class Game
 
     public Task Init()
     {
+        const int fieldWidth = 1920;
+        const int fieldHeight = 1080;
+
         Console.WriteLine("Init");
-
-        const int fieldSize = 5000;
-
-        Console.WriteLine($"Creating Field with size {fieldSize}x{fieldSize}");
-        Field = new Field(fieldSize, fieldSize);
+        Console.WriteLine($"Creating Field with size {fieldWidth}x{fieldHeight}");
+        Field = new Field(fieldWidth, fieldHeight, _parallelOptions);
 
         Console.WriteLine("Init complete");
 
@@ -44,6 +44,9 @@ public class Game
         {
             var drift = Math.Max(0, (int) sw.ElapsedMilliseconds - _tickSpeedInMs);
             sw.Restart();
+
+            var loopProfiler = MiniProfiler.StartNew("Game loop");
+
             Tick();
 
             OnTickEvent?.Invoke();
@@ -55,9 +58,11 @@ public class Game
             }
 
             await Task.Delay(delay > 0 ? delay : 0);
-        }
 
-        Console.WriteLine(MiniProfiler.Current.RenderPlainText());
+            Console.WriteLine(TimeProvider.System.GetLocalNow().ToString("O"));
+            Console.WriteLine(loopProfiler.RenderPlainText());
+            Console.WriteLine();
+        }
     }
 
     public void UpdateGps(int gps)
