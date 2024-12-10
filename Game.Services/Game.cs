@@ -10,8 +10,7 @@ public class Game
     private readonly ParallelOptions _parallelOptions = new() { MaxDegreeOfParallelism = Environment.ProcessorCount / 2 };
 
     private CancellationTokenSource _cancellationTokenSource = new();
-    private int _generation;
-    private MiniProfiler _profiler = MiniProfiler.StartNew("Game")!;
+    public int Generation { get; private set; }
 
     private int _tickSpeedInMs = 350;
 
@@ -20,8 +19,8 @@ public class Game
 
     public Task Init()
     {
-        const int fieldWidth = 1920;
-        const int fieldHeight = 1080;
+        const int fieldWidth = 30;
+        const int fieldHeight = 20;
 
         Console.WriteLine("Init");
         Console.WriteLine($"Creating Field with size {fieldWidth}x{fieldHeight}");
@@ -83,7 +82,7 @@ public class Game
 
         Stop();
         Field!.Clear();
-        _generation = 0;
+        Generation = 0;
     }
 
 
@@ -104,6 +103,6 @@ public class Game
     private void Tick()
     {
         Field!.Advance();
-        _generation++;
+        Generation++;
     }
 }

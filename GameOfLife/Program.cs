@@ -1,5 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using StackExchange.Profiling;
+
+MiniProfiler.StartNew();
+
 Console.WriteLine("Let's go!");
 
 var cts = new CancellationTokenSource();

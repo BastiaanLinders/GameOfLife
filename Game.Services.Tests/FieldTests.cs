@@ -10,19 +10,19 @@ public class FieldTests
     {
         // Arrange
         const string before = """
-                              -+---
-                              -+--+
-                              -----
-                              +----
-                              --++-
+                              - + - - -
+                              - + - - +
+                              - - - - -
+                              + - - - -
+                              - - + + -
                               """;
 
         const string expected = """
-                                -----
-                                -----
-                                -----
-                                -----
-                                -----
+                                - - - - -
+                                - - - - -
+                                - - - - -
+                                - - - - -
+                                - - - - -
                                 """;
 
         var sut = ParseField(before);
@@ -39,19 +39,19 @@ public class FieldTests
     {
         // Arrange
         const string before = """
-                              +++--
-                              +++--
-                              -----
-                              +++++
-                              +++++
+                              + + + - -
+                              + + + - -
+                              - - - - -
+                              + + + + +
+                              + + + + +
                               """;
 
         const string expected = """
-                                +-+--
-                                +-+--
-                                -----
-                                +---+
-                                +---+
+                                + - + - -
+                                + - + - -
+                                - - - - -
+                                + - - - +
+                                + - - - +
                                 """;
 
         var sut = ParseField(before);
@@ -68,19 +68,19 @@ public class FieldTests
     {
         // Arrange
         const string before = """
-                              -----
-                              -----
-                              -+++-
-                              -----
-                              -----
+                              - - - - -
+                              - - - - -
+                              - + + + -
+                              - - - - -
+                              - - - - -
                               """;
 
         const string expected = """
-                                -----
-                                --+--
-                                --+--
-                                --+--
-                                -----
+                                - - - - -
+                                - - + - -
+                                - - + - -
+                                - - + - -
+                                - - - - -
                                 """;
 
         var sut = ParseField(before);
@@ -97,11 +97,11 @@ public class FieldTests
     {
         // Arrange
         const string before = """
-                              -----
-                              -++--
-                              -++--
-                              -----
-                              -----
+                              - - - - -
+                              - + + - -
+                              - + + - -
+                              - - - - -
+                              - - - - -
                               """;
 
         var sut = ParseField(before);
@@ -118,11 +118,11 @@ public class FieldTests
     {
         // Arrange
         const string before = """
-                              --++-
-                              -+--+
-                              -+--+
-                              --++-
-                              -----
+                              - - + + -
+                              - + - - +
+                              - + - - +
+                              - - + + -
+                              - - - - -
                               """;
 
         var sut = ParseField(before);
@@ -136,7 +136,7 @@ public class FieldTests
 
     private static Field ParseField(string fieldString)
     {
-        var lines = fieldString.Trim().Split(Environment.NewLine);
+        var lines = fieldString.Replace(" ", "").Trim().Split(Environment.NewLine);
         var height = lines.Length;
         var width = lines[0].Length;
 
@@ -165,9 +165,11 @@ public class FieldTests
         {
             for (var x = 0; x < width; x++)
             {
-                fieldString.Append(grid[y][x].IsAlive ? '+' : '-');
+                fieldString.Append(grid[y][x].IsAlive ? "+ " : "- ");
             }
 
+            // Remove last space
+            fieldString.Remove(fieldString.Length - 1, 1);
             fieldString.AppendLine();
         }
 
