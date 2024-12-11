@@ -2,11 +2,11 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife", "GameOfLife\GameOfLife.csproj", "{920DD796-09DD-4568-BFEB-1DFF4F120C55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Services", "Game.Services\Game.Services.csproj", "{12BB23CC-75CE-4531-8D6F-E8F45A7A4E71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Services", "GameOfLife.Services\GameOfLife.Services.csproj", "{12BB23CC-75CE-4531-8D6F-E8F45A7A4E71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.UI", "Game.UI\Game.UI.csproj", "{A1F2A57D-0659-41EF-B3D4-9B1F882E66CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.UI", "GameOfLife.UI\GameOfLife.UI.csproj", "{A1F2A57D-0659-41EF-B3D4-9B1F882E66CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game.Services.Tests", "Game.Services.Tests\Game.Services.Tests.csproj", "{7E8F3484-101C-4C18-8D4E-C45F4372D709}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameOfLife.Services.Tests", "GameOfLife.Services.Tests\GameOfLife.Services.Tests.csproj", "{7E8F3484-101C-4C18-8D4E-C45F4372D709}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

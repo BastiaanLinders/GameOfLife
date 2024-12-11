@@ -1,23 +1,15 @@
-﻿// See https://aka.ms/new-console-template for more information
-
+﻿using GameOfLife;
+using GameOfLife.Services.Config;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using StackExchange.Profiling;
 
 MiniProfiler.StartNew();
 
-Console.WriteLine("Let's go!");
+var builder = Host.CreateApplicationBuilder(args);
 
-var cts = new CancellationTokenSource();
-var game = new Game.Services.Game();
-await game.Init();
-game.Sprinkle(0.2);
+builder.Services.AddGameOfLifeServices();
+builder.Services.AddHostedService<Worker>();
 
-Console.CancelKeyPress += (_, eventArgs) =>
-{
-    cts.Cancel();
-    eventArgs.Cancel = true;
-    game.Stop();
-};
-
-await game.Start();
-
-Console.WriteLine("That's all folks!");
+using var host = builder.Build();
+host.Run();

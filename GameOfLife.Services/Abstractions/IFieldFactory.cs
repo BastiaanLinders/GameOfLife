@@ -1,4 +1,4 @@
-﻿namespace Game.Services.Di;
+﻿namespace GameOfLife.Services.Abstractions;
 
 public interface IFieldFactory
 {

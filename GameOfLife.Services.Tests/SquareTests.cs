@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-namespace Game.Services.Tests;
+namespace GameOfLife.Services.Tests;
 
 public class SquareTests
 {

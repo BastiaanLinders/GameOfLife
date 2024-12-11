@@ -1,4 +1,6 @@
-﻿namespace Game.Services.Di;
+﻿using GameOfLife.Services.Abstractions;
+
+namespace GameOfLife.Services;
 
 public class FieldFactory(ParallelOptions parallelOptions) : IFieldFactory
 {

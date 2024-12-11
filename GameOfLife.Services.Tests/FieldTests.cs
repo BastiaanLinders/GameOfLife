@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using FluentAssertions;
 
-namespace Game.Services.Tests;
+namespace GameOfLife.Services.Tests;
 
 public class FieldTests
 {
