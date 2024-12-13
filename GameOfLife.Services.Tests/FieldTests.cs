@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using FluentAssertions;
+using GameOfLife.Services.Mechanics;
 
 namespace GameOfLife.Services.Tests;
 

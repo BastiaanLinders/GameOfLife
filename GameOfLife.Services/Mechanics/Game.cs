@@ -1,7 +1,6 @@
 ﻿using GameOfLife.Services.Abstractions;
-using StackExchange.Profiling;
 
-namespace GameOfLife.Services;
+namespace GameOfLife.Services.Mechanics;
 
 public class Game(IFieldFactory fieldFactory) : IGame
 {
@@ -15,21 +14,12 @@ public class Game(IFieldFactory fieldFactory) : IGame
         _field = fieldFactory.Create(fieldWidth, fieldHeight);
     }
 
-    public void LetThereBeLife(CancellationToken cancellationToken)
-    {
-        while (cancellationToken.IsCancellationRequested == false)
-        {
-            var loopProfiler = MiniProfiler.StartNew("Game loop");
-            AdvanceGame();
-            OnAdvanced(this, EventArgs.Empty);
-            Console.WriteLine(loopProfiler.RenderPlainText());
-        }
-    }
-
     public void AdvanceGame()
     {
         _field!.Advance();
         _generation++;
+        
+        OnAdvanced(this, EventArgs.Empty);
     }
 
     public void Clear()

@@ -1,6 +1,6 @@
 ﻿using GameOfLife.Services.Abstractions;
 
-namespace GameOfLife.Services;
+namespace GameOfLife.Services.Mechanics;
 
 public class GameFactory(IFieldFactory fieldFactory) : IGameFactory
 {

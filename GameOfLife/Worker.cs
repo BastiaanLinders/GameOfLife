@@ -1,4 +1,5 @@
 ﻿using GameOfLife.Services;
+using GameOfLife.Services.Abstractions;
 using Microsoft.Extensions.Hosting;
 
 namespace GameOfLife;

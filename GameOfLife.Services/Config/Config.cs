@@ -1,4 +1,5 @@
 ﻿using GameOfLife.Services.Abstractions;
+using GameOfLife.Services.Mechanics;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace GameOfLife.Services.Config;

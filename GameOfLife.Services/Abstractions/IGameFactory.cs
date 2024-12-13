@@ -1,4 +1,4 @@
-﻿namespace GameOfLife.Services;
+﻿namespace GameOfLife.Services.Abstractions;
 
 public interface IGameFactory
 {

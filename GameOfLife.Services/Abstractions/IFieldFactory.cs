@@ -1,4 +1,6 @@
-﻿namespace GameOfLife.Services.Abstractions;
+﻿using GameOfLife.Services.Mechanics;
+
+namespace GameOfLife.Services.Abstractions;
 
 public interface IFieldFactory
 {

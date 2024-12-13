@@ -1,6 +1,6 @@
 ﻿using StackExchange.Profiling;
 
-namespace GameOfLife.Services;
+namespace GameOfLife.Services.Mechanics;
 
 public class Field
 {

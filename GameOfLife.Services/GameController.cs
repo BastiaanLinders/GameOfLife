@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using GameOfLife.Services.Abstractions;
 using StackExchange.Profiling;
 
 namespace GameOfLife.Services;
