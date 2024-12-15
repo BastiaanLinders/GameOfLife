@@ -20,6 +20,8 @@ namespace GameOfLife.Ui;
 /// </summary>
 public partial class MainWindow
 {
+    private const int RectSize = 5;
+    
     private readonly IGameController _gameController;
     private readonly Dictionary<Square, Rectangle> _fieldMap = new();
 
@@ -39,8 +41,8 @@ public partial class MainWindow
 
     private void OnInitClick(object sender, RoutedEventArgs e)
     {
-        var width = (int) GameCanvas.ActualWidth / 10;
-        var height = (int) GameCanvas.ActualHeight / 10;
+        var width = (int) GameCanvas.ActualWidth / RectSize;
+        var height = (int) GameCanvas.ActualHeight / RectSize;
 
         _gameController.Initialize(new GameOfLifeOptions
         {
@@ -75,7 +77,6 @@ public partial class MainWindow
         _redrawing = true;
 
         var random = new Random();
-        const int squaresize = 10;
 
         GameCanvas.Children.Clear();
         _fieldMap.Clear();
@@ -90,14 +91,14 @@ public partial class MainWindow
 
                 var r = new Rectangle
                 {
-                    Width = squaresize,
-                    Height = squaresize,
+                    Width = RectSize,
+                    Height = RectSize,
                     Stroke = new SolidColorBrush(Colors.Gray),
                     Fill = new SolidColorBrush(Colors.Orange),
                     Visibility = square.IsAlive ? Visibility.Visible : Visibility.Hidden
                 };
-                Canvas.SetLeft(r, square.Location.X * squaresize);
-                Canvas.SetTop(r, square.Location.Y * squaresize);
+                Canvas.SetLeft(r, square.Location.X * RectSize);
+                Canvas.SetTop(r, square.Location.Y * RectSize);
                 GameCanvas.Children.Add(r);
                 _fieldMap.Add(square, r);
             }
