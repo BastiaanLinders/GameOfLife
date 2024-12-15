@@ -1,4 +1,6 @@
-﻿namespace GameOfLife.Services.Abstractions;
+﻿using GameOfLife.Services.Mechanics;
+
+namespace GameOfLife.Services.Abstractions;
 
 public interface IGame
 {
@@ -6,4 +8,6 @@ public interface IGame
 
     void Init(int fieldWidth, int fieldHeight);
     void AdvanceGame();
+
+    IField Field { get; }
 }

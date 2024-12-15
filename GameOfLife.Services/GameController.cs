@@ -6,6 +6,7 @@ namespace GameOfLife.Services;
 
 public class GameController(IGameFactory gameFactory) : IGameController
 {
+    public event EventHandler<IField> OnInitialized = delegate { };
     public event EventHandler OnStarted = delegate { };
     public event EventHandler OnAdvanced = delegate { };
     public event EventHandler OnStopped = delegate { };
@@ -25,10 +26,12 @@ public class GameController(IGameFactory gameFactory) : IGameController
         }
 
         _game = gameFactory.Create();
-        _game.Init(options.FieldWidth, options.FieldHeight);
         _game.OnAdvanced += OnAdvanced;
-
         _gps = options.Gps;
+
+        _game.Init(options.FieldWidth, options.FieldHeight);
+
+        OnInitialized.Invoke(this, _game.Field);
     }
 
     public void Start()
@@ -53,6 +56,11 @@ public class GameController(IGameFactory gameFactory) : IGameController
 
         _cancellationTokenSource.Cancel();
         OnStopped(this, EventArgs.Empty);
+    }
+
+    public void ChangeGps(int gps)
+    {
+        _gps = gps;
     }
 
     private async Task LetThereBeLife(CancellationToken cancellationToken)

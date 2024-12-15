@@ -1,16 +1,22 @@
-﻿using StackExchange.Profiling;
+﻿using GameOfLife.Services.Abstractions;
+using StackExchange.Profiling;
 
 namespace GameOfLife.Services.Mechanics;
 
-public class Field
+public class Field : IField
 {
     private readonly ParallelOptions _parallelOptions;
 
+    public int Width { get; }
+    public int Height { get; }
     public Square[][] Grid { get; }
-    public IEnumerable<Square> Squares { get; }
+    private IEnumerable<Square> Squares { get; }
 
     public Field(int width, int height, ParallelOptions parallelOptions)
     {
+        Width = width;
+        Height = height;
+
         _parallelOptions = parallelOptions;
 
         using var _ = MiniProfiler.Current.Step("Field Ctor");

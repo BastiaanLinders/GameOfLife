@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using GameOfLife.Services.Mechanics;
 
-namespace GameOfLife.Services.Tests;
+namespace GameOfLife.Services.Tests.Mechanics;
 
 public class SquareTests
 {
