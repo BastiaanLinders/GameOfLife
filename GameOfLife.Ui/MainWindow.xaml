@@ -12,12 +12,17 @@
             <RowDefinition Height="40px" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="LightGreen">
-            <Button Click="OnInitClick">Init</Button>
-            <Button Click="OnStartClick">Start</Button>
-            <Slider ValueChanged="OnGpsSliderChanged" Minimum="1" Maximum="100" Width="250" Margin="10,0,10,0" />
-            <Button Click="OnStopClick">Stop</Button>
-        </StackPanel>
+        <DockPanel Grid.Row="0">
+            <StackPanel Orientation="Horizontal" Background="LightGreen" HorizontalAlignment="Left">
+                <Button Click="OnInitClick">Init</Button>
+                <Button Click="OnStartClick">Start</Button>
+                <Slider ValueChanged="OnGpsSliderChanged" Minimum="1" Maximum="100" Width="250" Margin="10,0,10,0" />
+                <Button Click="OnStopClick">Stop</Button>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Background="Pink" HorizontalAlignment="Right">
+                <local:GameStateControl x:Name="StateControl" />
+            </StackPanel>
+        </DockPanel>
         <DockPanel Grid.Row="1">
             <Canvas Name="GameCanvas" Background="LightBlue" />
         </DockPanel>

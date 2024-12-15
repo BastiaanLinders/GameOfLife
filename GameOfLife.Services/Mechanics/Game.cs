@@ -4,7 +4,7 @@ namespace GameOfLife.Services.Mechanics;
 
 public class Game(IFieldFactory fieldFactory) : IGame
 {
-    public event EventHandler OnAdvanced = delegate { };
+    public event EventHandler<int> OnAdvanced = delegate { };
     public IField Field => _field;
 
 
@@ -21,7 +21,7 @@ public class Game(IFieldFactory fieldFactory) : IGame
         _field!.Advance();
         _generation++;
 
-        OnAdvanced(this, EventArgs.Empty);
+        OnAdvanced(this, _generation);
     }
 
     public void Clear()

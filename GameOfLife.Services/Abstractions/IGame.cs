@@ -4,7 +4,7 @@ namespace GameOfLife.Services.Abstractions;
 
 public interface IGame
 {
-    event EventHandler OnAdvanced;
+    event EventHandler<int> OnAdvanced;
 
     void Init(int fieldWidth, int fieldHeight);
     void AdvanceGame();

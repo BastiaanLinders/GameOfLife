@@ -8,8 +8,9 @@ public class GameController(IGameFactory gameFactory) : IGameController
 {
     public event EventHandler<IField> OnInitialized = delegate { };
     public event EventHandler OnStarted = delegate { };
-    public event EventHandler OnAdvanced = delegate { };
+    public event EventHandler<int> OnAdvanced = delegate { };
     public event EventHandler OnStopped = delegate { };
+    public event EventHandler<int> OnGpsChanged = delegate { };
 
     private CancellationTokenSource _cancellationTokenSource = new();
     private bool _isInitialized = false;
@@ -61,6 +62,7 @@ public class GameController(IGameFactory gameFactory) : IGameController
     public void ChangeGps(int gps)
     {
         _gps = gps;
+        OnGpsChanged(this, _gps);
     }
 
     private async Task LetThereBeLife(CancellationToken cancellationToken)
@@ -69,8 +71,7 @@ public class GameController(IGameFactory gameFactory) : IGameController
         while (cancellationToken.IsCancellationRequested == false)
         {
             var loopProfiler = MiniProfiler.StartNew("Game loop");
-            _game!.AdvanceGame();
-            OnAdvanced(this, EventArgs.Empty);
+            _game.AdvanceGame();
             Console.WriteLine(loopProfiler.RenderPlainText());
 
             await DelayToMatchGps(gpsSw);

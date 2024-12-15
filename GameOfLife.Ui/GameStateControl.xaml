@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="GameOfLife.Ui.GameStateControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GameOfLife.Ui"
+             mc:Ignorable="d"
+             d:DesignHeight="40" d:DesignWidth="*" d:DataContext="{local:GameStateViewModel}">
+    <Grid>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <TextBlock Margin="10,0,0,0" FontWeight="Bold">State</TextBlock>
+            <TextBlock Margin="10,0,0,0" Text="IsRunning:" />
+            <TextBlock Margin="10,0,0,0" Text="{Binding IsRunning}" />
+            <TextBlock Margin="10,0,0,0" Text="Generation:" />
+            <TextBlock Margin="10,0,0,0" Text="{Binding Generation}" />
+            <TextBlock Margin="10,0,0,0" Text="RenderCount:" />
+            <TextBlock Margin="10,0,0,0" Text="{Binding UpdateGridCount}" />
+            <TextBlock Margin="10,0,0,0" Text="Gps:" />
+            <TextBlock Margin="10,0,10,0" Text="{Binding Gps}" />
+        </StackPanel>
+
+    </Grid>
+</UserControl>

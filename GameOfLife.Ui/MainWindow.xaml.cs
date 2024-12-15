@@ -12,6 +12,7 @@ using Accessibility;
 using GameOfLife.Services.Abstractions;
 using GameOfLife.Services.Mechanics;
 using MahApps.Metro.Controls;
+using StackExchange.Profiling;
 
 namespace GameOfLife.Ui;
 
@@ -21,7 +22,7 @@ namespace GameOfLife.Ui;
 public partial class MainWindow
 {
     private const int RectSize = 5;
-    
+
     private readonly IGameController _gameController;
     private readonly Dictionary<Square, Rectangle> _fieldMap = new();
 
@@ -29,14 +30,18 @@ public partial class MainWindow
     {
         _gameController = gameController;
 
-        SetupGameController();
         InitializeComponent();
+
+        SetupGameController();
     }
 
     private void SetupGameController()
     {
-        _gameController.OnInitialized += (_, field) => Dispatcher.Invoke(() => RedrawGrid(field));
-        _gameController.OnAdvanced += (_, _) => Dispatcher.Invoke(UpdateGrid);
+        _gameController.OnInitialized += (_, field) => Dispatcher.Invoke(() => OnGameInitialized(field));
+        _gameController.OnStarted += (_, _) => Dispatcher.Invoke(OnGameStarted);
+        _gameController.OnAdvanced += (_, generation) => Dispatcher.Invoke(() => OnGameAdvanced(generation));
+        _gameController.OnStopped += (_, _) => Dispatcher.Invoke(OnGameStopped);
+        _gameController.OnGpsChanged += (_, gps) => Dispatcher.Invoke(() => OnGpsChanged(gps));
     }
 
     private void OnInitClick(object sender, RoutedEventArgs e)
@@ -67,15 +72,35 @@ public partial class MainWindow
         var gps = Convert.ToInt32(e.NewValue);
         _gameController.ChangeGps(gps);
     }
-    
 
-    private bool _redrawing;
-
-    private void RedrawGrid(IField field)
+    private void OnGameInitialized(IField field)
     {
-        if (_redrawing) return;
-        _redrawing = true;
+        DrawGrid(field);
+    }
 
+    private void OnGameStarted()
+    {
+        StateControl.ViewModel.IsRunning = true;
+    }
+
+    private void OnGameAdvanced(int generation)
+    {
+        StateControl.ViewModel.Generation = generation;
+        UpdateGrid();
+    }
+
+    private void OnGameStopped()
+    {
+        StateControl.ViewModel.IsRunning = false;
+    }
+
+    private void OnGpsChanged(int gps)
+    {
+        StateControl.ViewModel.Gps = gps;
+    }
+
+    private void DrawGrid(IField field)
+    {
         var random = new Random();
 
         GameCanvas.Children.Clear();
@@ -103,16 +128,16 @@ public partial class MainWindow
                 _fieldMap.Add(square, r);
             }
         }
-
-        _redrawing = false;
     }
 
     private void UpdateGrid()
     {
+        using var _ = MiniProfiler.Current.Step("UpdateGrid");
         foreach (var (square, rectangle) in _fieldMap)
         {
             rectangle.Visibility = square.IsAlive ? Visibility.Visible : Visibility.Hidden;
-            //rectangle.Fill = new SolidColorBrush(square.IsAlive ? Colors.Orange : Colors.LightGray);
         }
+
+        StateControl.ViewModel.UpdateGridCount++;
     }
 }

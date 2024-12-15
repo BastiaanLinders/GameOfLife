@@ -3,6 +3,7 @@ using System.Data;
 using System.Windows;
 using GameOfLife.Services.Config;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Profiling;
 
 namespace GameOfLife.Ui;
 
@@ -18,6 +19,8 @@ public partial class App : IDisposable, IAsyncDisposable
         var serviceCollection = new ServiceCollection();
         ConfigureServices(serviceCollection);
         _serviceProvider = serviceCollection.BuildServiceProvider();
+
+        MiniProfiler.StartNew("Root");
 
         var mainWindow = _serviceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();

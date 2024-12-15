@@ -9,6 +9,7 @@ public interface IGameController
 
     event EventHandler<IField> OnInitialized;
     event EventHandler OnStarted;
-    event EventHandler OnAdvanced;
+    event EventHandler<int> OnAdvanced;
     event EventHandler OnStopped;
+    event EventHandler<int> OnGpsChanged;
 }
