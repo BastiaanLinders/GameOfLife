@@ -45,4 +45,12 @@ public class GameStateViewModel : ViewModelBase
             OnPropertyChanged(nameof(Gps));
         }
     }
+
+    private class GameState
+    {
+        public bool IsRunning { get; set; }
+        public int Generation { get; set; }
+        public int UpdateGridCount { get; set; }
+        public int Gps { get; set; }
+    }
 }

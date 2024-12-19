@@ -12,6 +12,7 @@ public class GameController(IGameFactory gameFactory) : IGameController
     public event EventHandler OnStopped = delegate { };
     public event EventHandler<int> OnGpsChanged = delegate { };
 
+    private Random _random = new();
     private CancellationTokenSource _cancellationTokenSource = new();
     private bool _isInitialized = false;
     private bool _isRunning = false;
@@ -33,6 +34,15 @@ public class GameController(IGameFactory gameFactory) : IGameController
         _game.Init(options.FieldWidth, options.FieldHeight);
 
         OnInitialized.Invoke(this, _game.Field);
+    }
+
+    public void Sprinkle(int chanceOfLife)
+    {
+        var squares = _game.Field.Grid.SelectMany(row => row);
+        foreach (var square in squares)
+        {
+            square.IsAlive = _random.Next(100) <= chanceOfLife;
+        }
     }
 
     public void Start()

@@ -3,6 +3,7 @@
 public interface IGameController
 {
     void Initialize(GameOfLifeOptions options);
+    void Sprinkle(int chanceOfLife);
     void Start();
     void Stop();
     void ChangeGps(int gps);

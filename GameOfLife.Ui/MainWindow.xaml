@@ -15,6 +15,7 @@
         <DockPanel Grid.Row="0">
             <StackPanel Orientation="Horizontal" Background="LightGreen" HorizontalAlignment="Left">
                 <Button Click="OnInitClick">Init</Button>
+                <Button Click="OnSprinkleClick">Sprinkle</Button>
                 <Button Click="OnStartClick">Start</Button>
                 <Slider ValueChanged="OnGpsSliderChanged" Minimum="1" Maximum="100" Width="250" Margin="10,0,10,0" />
                 <Button Click="OnStopClick">Stop</Button>

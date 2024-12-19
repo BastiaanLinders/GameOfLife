@@ -7,7 +7,6 @@ public class Game(IFieldFactory fieldFactory) : IGame
     public event EventHandler<int> OnAdvanced = delegate { };
     public IField Field => _field;
 
-
     private Field _field = null!;
     private int _generation;
 

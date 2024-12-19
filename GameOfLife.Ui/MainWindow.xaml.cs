@@ -1,17 +1,9 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Accessibility;
 using GameOfLife.Services.Abstractions;
 using GameOfLife.Services.Mechanics;
-using MahApps.Metro.Controls;
 using StackExchange.Profiling;
 
 namespace GameOfLife.Ui;
@@ -21,10 +13,10 @@ namespace GameOfLife.Ui;
 /// </summary>
 public partial class MainWindow
 {
-    private const int RectSize = 5;
+    private const int RectSize = 10;
 
     private readonly IGameController _gameController;
-    private readonly Dictionary<Square, Rectangle> _fieldMap = new();
+    private readonly Dictionary<Square, (Rectangle Alive, Rectangle Background)> _fieldMap = new();
 
     public MainWindow(IGameController gameController)
     {
@@ -55,6 +47,12 @@ public partial class MainWindow
             FieldHeight = height,
             Gps = 3
         });
+    }
+
+    private void OnSprinkleClick(object sender, RoutedEventArgs e)
+    {
+        _gameController.Sprinkle(25);
+        UpdateGrid();
     }
 
     private void OnStartClick(object sender, RoutedEventArgs e)
@@ -101,7 +99,7 @@ public partial class MainWindow
 
     private void DrawGrid(IField field)
     {
-        var random = new Random();
+        using var _ = MiniProfiler.Current.Step("DrawGrid");
 
         GameCanvas.Children.Clear();
         _fieldMap.Clear();
@@ -111,21 +109,30 @@ public partial class MainWindow
         {
             foreach (var square in row)
             {
-                // TODO: Temp
-                square.IsAlive = random.Next(0, 100) > 80;
-
-                var r = new Rectangle
+                var rBg = new Rectangle
                 {
                     Width = RectSize,
                     Height = RectSize,
-                    Stroke = new SolidColorBrush(Colors.Gray),
+                    Stroke = new SolidColorBrush(Colors.DimGray),
+                    Fill = new SolidColorBrush(Colors.Gray)
+                };
+                Canvas.SetLeft(rBg, square.Location.X * RectSize);
+                Canvas.SetTop(rBg, square.Location.Y * RectSize);
+                GameCanvas.Children.Add(rBg);
+
+                var rAlive = new Rectangle
+                {
+                    Width = RectSize,
+                    Height = RectSize,
+                    Stroke = new SolidColorBrush(Colors.DarkOrange),
                     Fill = new SolidColorBrush(Colors.Orange),
                     Visibility = square.IsAlive ? Visibility.Visible : Visibility.Hidden
                 };
-                Canvas.SetLeft(r, square.Location.X * RectSize);
-                Canvas.SetTop(r, square.Location.Y * RectSize);
-                GameCanvas.Children.Add(r);
-                _fieldMap.Add(square, r);
+                Canvas.SetLeft(rAlive, square.Location.X * RectSize);
+                Canvas.SetTop(rAlive, square.Location.Y * RectSize);
+                GameCanvas.Children.Add(rAlive);
+
+                _fieldMap.Add(square, (Alive: rAlive, Background: rBg));
             }
         }
     }
@@ -133,9 +140,10 @@ public partial class MainWindow
     private void UpdateGrid()
     {
         using var _ = MiniProfiler.Current.Step("UpdateGrid");
-        foreach (var (square, rectangle) in _fieldMap)
+
+        foreach (var (square, (rAlive, _)) in _fieldMap)
         {
-            rectangle.Visibility = square.IsAlive ? Visibility.Visible : Visibility.Hidden;
+            rAlive.Visibility = square.IsAlive ? Visibility.Visible : Visibility.Hidden;
         }
 
         StateControl.ViewModel.UpdateGridCount++;
